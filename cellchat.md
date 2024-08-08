@@ -13,12 +13,16 @@ Figure cellchat
 - [Compute Communication Probability
   LRRK2](#compute-communication-probability-lrrk2)
 - [Compare Interactions](#compare-interactions)
+- [Figure 5-A: Relative Information
+  Flow](#figure-5-a-relative-information-flow)
 - [Pathways Analysis](#pathways-analysis)
-- [PSAP Information Flow
-  Visualization](#psap-information-flow-visualization)
+- [Figure 5-B: PSAP Information Flow
+  Visualization](#figure-5-b-psap-information-flow-visualization)
 - [MIF Gene Expression](#mif-gene-expression)
-- [MIF Information Flow
-  Visualization](#mif-information-flow-visualization)
+- [Figure 5-C: MIF Information Flow
+  Visualization](#figure-5-c-mif-information-flow-visualization)
+- [Figure 5-D: SEMA6 Information Flow
+  Visualization](#figure-5-d-sema6-information-flow-visualization)
 - [Selected Overall Gene Expression](#selected-overall-gene-expression)
 
 ``` r
@@ -86,8 +90,8 @@ cellchat <- computeCommunProb(cellchat, type = "triMean", nboot=100)
 ```
 
     ## triMean is used for calculating the average gene expression per cell group. 
-    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-07 09:30:02.603889]"
-    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-07 09:36:06.940072]"
+    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 07:52:18.482544]"
+    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 07:58:30.847968]"
 
 ``` r
 cellchat <- filterCommunication(cellchat, min.cells = 50)
@@ -156,8 +160,8 @@ cellchat <- computeCommunProb(cellchat, type = "triMean", nboot=100)
 ```
 
     ## triMean is used for calculating the average gene expression per cell group. 
-    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-07 09:36:21.539736]"
-    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-07 09:41:42.983445]"
+    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 07:58:46.213824]"
+    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 08:04:17.986998]"
 
 ``` r
 cellchat <- filterCommunication(cellchat, min.cells = 50)
@@ -204,16 +208,19 @@ gg1 + gg2
 ``` r
 #dev.off()
 #pdf("Combining_Information_Flow.pdf", width=20, height=10)
-gg1 + gg2
-```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-10-3.png)<!-- -->
-
-``` r
 #dev.off()
 
 #write.table(gg1$data, file="Combining_Information_Flow_Data.txt", sep="\t", quote = F)
 ```
+
+## Figure 5-A: Relative Information Flow
+
+``` r
+gg1 
+```
+
+![](cellchat_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ## Pathways Analysis
 
@@ -235,9 +242,9 @@ plotGeneExpression(cellchat, signaling = "SEMA6", split.by = "datasets", colors.
 #dev.off()
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
-## PSAP Information Flow Visualization
+## Figure 5-B: PSAP Information Flow Visualization
 
 ``` r
 #pdf("Circle_Information_Flow_PSAP_MIF.pdf", width=10, height=10)
@@ -250,7 +257,7 @@ for (i in 1:1) {
 #dev.off()
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ## MIF Gene Expression
 
@@ -275,13 +282,13 @@ plotGeneExpression(cellchat, signaling = "MIF", split.by = "datasets", colors.gg
     ## Scale for y is already present.
     ## Adding another scale for y, which will replace the existing scale.
 
-![](cellchat_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 #dev.off()
 ```
 
-## MIF Information Flow Visualization
+## Figure 5-C: MIF Information Flow Visualization
 
 ``` r
 pathways.show <- c("MIF") 
@@ -291,11 +298,24 @@ for (i in 2:length(object.list)) {
 }
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 #dev.off()
 ```
+
+## Figure 5-D: SEMA6 Information Flow Visualization
+
+``` r
+pathways.show <- c("SEMA6") 
+par(mfrow = c(2,2), xpd=TRUE)
+for (i in 1:length(object.list)) {
+  netVisual_aggregate(object.list[[i]], 
+                      signaling = pathways.show ,  color.use = Col_Use, layout = "circle", signaling.name = paste(pathways.show, names(object.list)[i]))
+}
+```
+
+![](cellchat_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ## Selected Overall Gene Expression
 
@@ -305,7 +325,7 @@ cellchat@meta$datasets = factor(cellchat@meta$datasets, levels = c("HC", "LRRK2"
 plotGeneExpression(cellchat, signaling = c("SEMA3", "SEMA4", "SEMA5", "SEMA6"), split.by = "datasets", colors.ggplot = T, type = "violin")
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
 #dev.off()
@@ -315,7 +335,7 @@ cellchat@meta$datasets = factor(cellchat@meta$datasets, levels = c("HC", "LRRK2"
 plotGeneExpression(cellchat, signaling = c("HH"), split.by = "datasets", colors.ggplot = T, type = "violin")
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-15-2.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
 
 ``` r
 #dev.off()
