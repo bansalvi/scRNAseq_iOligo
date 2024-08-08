@@ -9,10 +9,10 @@ Figure 1
 - [Figure 1-C: UMAP visualisation](#figure-1-c-umap-visualisation)
 - [Excluding sample 8 from the
   analysis](#excluding-sample-8-from-the-analysis)
-- [Figure 1-G :Dotplot with known marker genes for cluster
-  identification](#figure-1-g-dotplot-with-known-marker-genes-for-cluster-identification)
 - [Figure 1-F: Celltype composition
   calculation](#figure-1-f-celltype-composition-calculation)
+- [Figure 1-G :Dotplot with known marker genes for cluster
+  identification](#figure-1-g-dotplot-with-known-marker-genes-for-cluster-identification)
 
 ## Load libraries
 
@@ -24,10 +24,9 @@ library(ggplot2)
 library(dplyr)
 library(data.table)
 library(speckle)
-library(openxlsx)
-library(data.table)
-library(dplyr)
-library(openxlsx)
+library(ggpubr)
+
+
 
 # Uncomment the line below to install the 'presto' package if needed 
 #devtools::install_github('immunogenomics/presto')
@@ -149,39 +148,6 @@ pd <- subset(pd,idents = c("s1", "s2", "s3", "s4", "s5", "s6", "s7") )
 
 \##Read in object without cluster 8
 
-## Figure 1-G :Dotplot with known marker genes for cluster identification
-
-``` r
-# Define output path for plots
-#pathto.outPlots <- "/data/nasser/Manuscript/plots/figure1/"
-#outName <- "Figure1_d_"
-
-# Set the default assay to RNA
-DefaultAssay(pd) <- "RNA"
-
-# Set identities to BroadCellType
-Idents(pd) = "BroadCellType"
-
-# Define marker genes for dot plot
-Genes_dotPlot <- rev(unique(c( "GFAP", "NES","BTG2","HES6", "RBFOX3", "SLC17A6", "SNAP25","RIT2" ,"TH", "ZCCHC12", "SNCA", "CLDN5", "SHH","TOP2A", "MKI67","LRRK2","PDGFRA","MAG", "MBP", "MOG", "PLP1","CNP" )))
-
-# Set levels for pd.sub
-levels(pd) <- c('iRGC','iINPC','iNL1', 'iNL2', 'iCEP','iPPC','iOPC','iODC')
-
-# Dot plot for cell markers
-#png(paste0(pathto.outPlots,outName,"Dotplot_cellmarkers_update.png"), width=2500, height=1500, res = 300)
-DotPlot(pd, idents = c('iRGC','iINPC','iNL1', 'iNL2', 'iCEP','iPPC ','iOPC','iODC'), assay = "RNA", features = Genes_dotPlot,  dot.min = 0.1, cols=c("blue", "red")) + scale_colour_gradient2(low="steelblue", mid="lightgrey", high="red") + RotatedAxis()
-```
-
-    ## Scale for colour is already present.
-    ## Adding another scale for colour, which will replace the existing scale.
-
-![](Figure1_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
-
-``` r
-#dev.off()
-```
-
 ## Figure 1-F: Celltype composition calculation
 
 ``` r
@@ -262,3 +228,54 @@ d_sum
     ## 5 s5        3.20  9.58 35.0   4.34 1.09   1.78  8.32  36.7  6337 HC      
     ## 6 s6        3.69  7.44 16.7  11.5  0.977  7.55 16.4   35.7  1842 HC      
     ## 7 s7        7.93  7.78  4.45  4.70 1.01   3.75  8.51  61.9  3278 HC
+
+``` r
+# Factor the BroadCellType column according to the specified order
+pd@meta.data$BroadCellType <- factor(pd@meta.data$BroadCellType, levels = c('iODC','iOPC','iPPC','iCEP','iNL2','iNL1','iINPC','iRGC'))
+
+# Create the plot
+p <- ggplot(pd@meta.data, aes(x=SampleID, fill=BroadCellType)) + 
+  geom_bar(position = "fill") + 
+  RotatedAxis() + 
+  theme_classic() +
+  scale_fill_manual(values= c("#C85200", "#66C2A5", "#6677B3","#FFCC66","#99CC66","#FF9933","#B3B3B3", "#FF9999"))+
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2), labels = scales::number_format(scale = 100))
+
+# Display the plot
+p
+```
+
+![](Figure1_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+## Figure 1-G :Dotplot with known marker genes for cluster identification
+
+``` r
+# Define output path for plots
+#pathto.outPlots <- "/data/nasser/Manuscript/plots/figure1/"
+#outName <- "Figure1_d_"
+
+# Set the default assay to RNA
+DefaultAssay(pd) <- "RNA"
+
+# Set identities to BroadCellType
+Idents(pd) = "BroadCellType"
+
+# Define marker genes for dot plot
+Genes_dotPlot <- rev(unique(c( "GFAP", "NES","BTG2","HES6", "RBFOX3", "SLC17A6", "SNAP25","RIT2" ,"TH", "ZCCHC12", "SNCA", "CLDN5", "SHH","TOP2A", "MKI67","LRRK2","PDGFRA","MAG", "MBP", "MOG", "PLP1","CNP" )))
+
+# Set levels for pd.sub
+levels(pd) <- c('iRGC','iINPC','iNL1', 'iNL2', 'iCEP','iPPC','iOPC','iODC')
+
+# Dot plot for cell markers
+#png(paste0(pathto.outPlots,outName,"Dotplot_cellmarkers_update.png"), width=2500, height=1500, res = 300)
+DotPlot(pd, idents = c('iRGC','iINPC','iNL1', 'iNL2', 'iCEP','iPPC ','iOPC','iODC'), assay = "RNA", features = Genes_dotPlot,  dot.min = 0.1, cols=c("blue", "red")) + scale_colour_gradient2(low="steelblue", mid="lightgrey", high="red") + RotatedAxis()
+```
+
+    ## Scale for colour is already present.
+    ## Adding another scale for colour, which will replace the existing scale.
+
+![](Figure1_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
+#dev.off()
+```

@@ -6,6 +6,7 @@ Figure2
 - [Load the RNA-Seq data](#load-the-rna-seq-data)
 - [Adding cluster cell type names](#adding-cluster-cell-type-names)
 - [Figure 2-A: Feature plot](#figure-2-a-feature-plot)
+- [Figure 2-A: Feature plot](#figure-2-a-feature-plot-1)
 - [Figure 2-B : UMAP visualisation of
   clusters](#figure-2-b--umap-visualisation-of-clusters)
 - [Figure 2-C: Heatmap of markers for oligodendroglial
@@ -126,6 +127,23 @@ p
 #dev.off()
 ```
 
+## Figure 2-A: Feature plot
+
+``` r
+p <- SCpubr::do_NebulosaPlot(pd,
+                        features = c("PDGFRA","LRRK2"), joint=T)
+#pathto.outPlots = "/data/nasser/Manuscript/plots/figure2/"
+#outname = "figure2_d_"
+#png(paste0(pathto.outPlots,outname,"SCpubR_JointDensity_PDGFRA_LRRK2.png"), width=5000, height=3000, res = 300)
+p
+```
+
+![](Figure2_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+#dev.off()
+```
+
 ## Figure 2-B : UMAP visualisation of clusters
 
 ``` r
@@ -138,13 +156,13 @@ levels(pd.sub) <- c('iPPC_0','iPPC_1','iPPC_2',"iNL2", "iOPC", "iCEP", "iNL1", "
 #outname = "figure2_a_"
 
 #png(paste0(pathto.outPlots,outname,"UMAP_subcluster3.png"), width=1500, height=1000,res = 300)
-p=DimPlot(object = pd.sub, reduction = "umap", label = F, pt.size = 0.5, cols = rushmore_palette) 
+p=DimPlot(object = pd.sub, reduction = "umap", label = T, pt.size = 0.5, cols = rushmore_palette) 
 #dev.off()
 
 p
 ```
 
-![](Figure2_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](Figure2_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 <!-- ## Supplementary table S2 - excluding sample 8 + iPPC cell types -->
 <!-- ```{r} -->
@@ -191,10 +209,10 @@ levels(olig_sub) <- c('iPPC_0','iPPC_1','iPPC_2', "iOPC", "iODC")
 rushmore_palette <- c("#47537d","#8492c2", "#d1d6e8","#66C2A5", "#C85200")
 
 #png(paste0(pathto.outPlots,outname,"UMAP_olig_lineage.png"), width=1500, height=1000,res = 300)
-DimPlot(object = olig_sub, reduction = "umap", label = F, pt.size = 0.5, cols = rushmore_palette) 
+DimPlot(object = olig_sub, reduction = "umap", label = T, pt.size = 0.5, cols = rushmore_palette) 
 ```
 
-![](Figure2_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Figure2_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 #dev.off()
@@ -303,7 +321,7 @@ DoHeatmap(olig_sub, features = top_markers$gene, size = 2) +
     ## Scale for fill is already present.
     ## Adding another scale for fill, which will replace the existing scale.
 
-![](Figure2_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](Figure2_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 test.markers_olig <- FindAllMarkers(ippc_sub, only.pos= TRUE, min.pct =0.1, logfc.threshold=0.1, min.diff.pct = 0.2)
@@ -398,11 +416,14 @@ p
 ## Figure 2-F: Celltype composition boxplot
 
 ``` r
+# Factor the CellType column according to the specified order
+pd@meta.data$CellType <- factor(pd@meta.data$CellType, levels = c('iRGC','iINPC','iNL1','iNL2','iCEP','iPPC_0','iPPC_1','iPPC_2','iOPC','iODC'))
+
 ggplot(pd@meta.data, aes(x=CellType, fill=Mutation)) + 
   geom_bar(position = "fill") + geom_text(stat = 'count', aes(label = ..count..), position = position_fill(vjust = 0.5)) + RotatedAxis() + theme_classic()
 ```
 
-![](Figure2_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](Figure2_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ## Cell cycle scoring
 
@@ -435,7 +456,7 @@ data.filt <- CellCycleScoring(
 VlnPlot(data.filt, features = c("S.Score","G2M.Score")) #higher G2M =  more actively dividing cells and higher S = more actively replicating DNA for following divisions
 ```
 
-![](Figure2_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](Figure2_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
 #pathto.outPlots = "/data/nasser/Manuscript/plots/figure2/"

@@ -9,13 +9,14 @@ Figure 3
   genes](#figure-3-a-data-preparation-for-upset-plot-for-upregulated-genes)
 - [Figure 3-A: UpSet plot for Upregulated
   genes](#figure-3-a-upset-plot-for-upregulated-genes)
-- [Figure 3-B: Violin plots of SNCA in iNL2 and LRRK2 in
-  oligodendroglial
-  lineage](#figure-3-b-violin-plots-of-snca-in-inl2-and-lrrk2-in-oligodendroglial-lineage)
-- [Figure 3-C: GO terms of upregulated
-  DEGs](#figure-3-c-go-terms-of-upregulated-degs)
-- [Figure 3-C: GO Heatmap for upregulated
-  DEGs](#figure-3-c-go-heatmap-for-upregulated-degs)
+- [Figure 3-B: GO terms of upregulated
+  DEGs](#figure-3-b-go-terms-of-upregulated-degs)
+- [Figure 3-B: GO Heatmap for upregulated
+  DEGs](#figure-3-b-go-heatmap-for-upregulated-degs)
+- [Figure 3-C: Violin plot LRRK2 in oligodendrocyte precursor cell
+  lineage](#figure-3-c-violin-plot-lrrk2-in-oligodendrocyte-precursor-cell-lineage)
+- [Figure 3-D: Violin plot of SNCA in iNL2
+  cluster](#figure-3-d-violin-plot-of-snca-in-inl2-cluster)
 
 ------------------------------------------------------------------------
 
@@ -33,26 +34,12 @@ chunks within the document. You can embed an R code chunk like this:
 
 ``` r
 .libPaths( c( "/data/Common_Folder/R/Single_cell_packages/", .libPaths()) )
-library("SCpubr")
 library(Seurat)
-library(patchwork)
-library(gridExtra)
 library(ggplot2)
-library(future)
 library(dplyr)
-library(SeuratData)
-library(glmGamPoi, lib.loc = "/data/nasser/R/packages_nasser/")
-library(harmony)
-library(enrichR)
-library(gprofiler2)
-library(data.table) 
-library(speckle, lib.loc = "/data/Common_Folder/R/Single_cell_packages/")
 library(ggpubr)
-library(tibble)
-
 library(tidyverse)
 library(ComplexHeatmap)
-library(circlize)
 library(viridis)
 library(UpSetR)
 
@@ -190,36 +177,7 @@ ht
 #dev.off()
 ```
 
-## Figure 3-B: Violin plots of SNCA in iNL2 and LRRK2 in oligodendroglial lineage
-
-``` r
-#Vln plots
-Idents(pd) = "CellType"
-#pathto.outPlots= "/data/nasser/Manuscript/plots/figure3/"
-celltype_subset <- subset(pd, idents = c("iOPC","iPPC_2", "iPPC_0", "iPPC_1", "iODC"))
-Idents(celltype_subset) <- "Mutation"
-#png(paste0(pathto.outPlots,"vlnplot_iOPC_LRRK2_PDGFRA_up_regulated.png"), width=2000, height=1100, res = 300)
-VlnPlot(celltype_subset, features = "LRRK2")
-```
-
-![](Figure3_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
-
-``` r
-#dev.off()
-
-celltype_subset <- subset(pd, idents = "iNL2")
-Idents(celltype_subset) <- "Mutation"
-#png(paste0(pathto.outPlots,"vlnplot_iNL2_SNCA_up_regulated.png"), width=2000, height=1100, res = 300)
-VlnPlot(celltype_subset, features = c("SNCA") )
-```
-
-![](Figure3_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
-
-``` r
-#dev.off()
-```
-
-## Figure 3-C: GO terms of upregulated DEGs
+## Figure 3-B: GO terms of upregulated DEGs
 
 ``` r
 # Define the path to the directory containing the files
@@ -289,7 +247,7 @@ rownames(heatmap_matrix) <- heatmap_data$Term
 heatmap_matrix[is.na(heatmap_matrix)] <- 0
 ```
 
-## Figure 3-C: GO Heatmap for upregulated DEGs
+## Figure 3-B: GO Heatmap for upregulated DEGs
 
 ``` r
 # Cap the maximum value to a specified threshold
@@ -312,11 +270,49 @@ Heatmap(scaled_mat,
         column_title = "CellType", 
         row_title = "Gene Ontology",
         col = viridis(5) ,
-        row_names_rot = 35
+        row_names_rot = 0 #35 for Figure but for better readability in rmarkdown set to 0
 )
 ```
 
+![](Figure3_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+#dev.off()
+```
+
+## Figure 3-C: Violin plot LRRK2 in oligodendrocyte precursor cell lineage
+
+``` r
+#Vln plots
+Idents(pd) = "CellType"
+
+
+Idents(pd) <- factor(Idents(pd), levels = c("iPPC_2","iNL2", "iOPC", "iPPC_0","iCEP","iNL1","iRGC","iODC","iINPC","iPPC_1"))
+
+
+# Create the violin plot 
+VlnPlot(pd, features = c("LRRK2"), idents = factor(c("iPPC_2","iPPC_0", "iOPC", "iPPC_1"), levels = c("iPPC_2","iPPC_0", "iOPC", "iPPC_1")), split.by = "Mutation", pt.size = 0)
+```
+
+    ## The default behaviour of split.by has changed.
+    ## Separate violin plots are now plotted side-by-side.
+    ## To restore the old behaviour of a single split violin,
+    ## set split.plot = TRUE.
+    ##       
+    ## This message will be shown once per session.
+
 ![](Figure3_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+## Figure 3-D: Violin plot of SNCA in iNL2 cluster
+
+``` r
+#Vln plots
+Idents(pd) = "CellType"
+
+VlnPlot(pd, features = c("SNCA"), idents = "iNL2", split.by = "Mutation", pt.size = 0 )
+```
+
+![](Figure3_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
 #dev.off()

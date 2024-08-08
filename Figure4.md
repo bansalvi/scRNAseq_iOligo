@@ -6,13 +6,14 @@ Figure 4
 - [Load the RNA-Seq data](#load-the-rna-seq-data)
 - [Figure 4-A: UpSet plot for Downregulated
   genes](#figure-4-a-upset-plot-for-downregulated-genes)
-- [Figure 4-B: Violin plots of MOBP, PLXNA2, TPPP and SEMA6A in
-  oligodendroglial
-  lineage](#figure-4-b-violin-plots-of-mobp-plxna2-tppp-and-sema6a-in-oligodendroglial-lineage)
-- [Figure 4-C: GO terms of downregulated
-  DEGs](#figure-4-c-go-terms-of-downregulated-degs)
-- [Figure 4-C: GO Heatmap for downregulated
-  DEGs](#figure-4-c-go-heatmap-for-downregulated-degs)
+- [Figure 4-B: GO terms of downregulated
+  DEGs](#figure-4-b-go-terms-of-downregulated-degs)
+- [Figure 4-B: GO Heatmap for downregulated
+  DEGs](#figure-4-b-go-heatmap-for-downregulated-degs)
+- [Figure 4-C: Violin plot of PLXNA2 and SEMA6A in
+  iOPC](#figure-4-c-violin-plot-of-plxna2-and-sema6a-in-iopc)
+- [Figure 4-D: Violin plot of MOBP and TPPP in
+  iODC](#figure-4-d-violin-plot-of-mobp-and-tppp-in-iodc)
 
 ------------------------------------------------------------------------
 
@@ -20,26 +21,12 @@ Figure 4
 
 ``` r
 .libPaths( c( "/data/Common_Folder/R/Single_cell_packages/", .libPaths()) )
-library("SCpubr")
 library(Seurat)
-library(patchwork)
-library(gridExtra)
 library(ggplot2)
-library(future)
 library(dplyr)
-library(SeuratData)
-library(glmGamPoi, lib.loc = "/data/nasser/R/packages_nasser/")
-library(harmony)
-library(enrichR)
-library(gprofiler2)
-library(data.table) 
-library(speckle, lib.loc = "/data/Common_Folder/R/Single_cell_packages/")
 library(ggpubr)
-library(tibble)
-
 library(tidyverse)
 library(ComplexHeatmap)
-library(circlize)
 library(viridis)
 library(UpSetR)
 
@@ -97,63 +84,7 @@ ht
 #dev.off()
 ```
 
-## Figure 4-B: Violin plots of MOBP, PLXNA2, TPPP and SEMA6A in oligodendroglial lineage
-
-``` r
-Idents(pd) = "CellType"
-#pathto.outPlots= "/data/nasser/Manuscript/plots/figure3/"
-celltype_subset <- subset(pd, idents = c("iOPC","iPPC_2", "iPPC_0", "iPPC_1", "iODC"))
-Idents(celltype_subset) <- "Mutation"
-#png(paste0(pathto.outPlots,"vlnplot_iOPC_LRRK2_PDGFRA_up_regulated.png"), width=2000, height=1100, res = 300)
-VlnPlot(celltype_subset, features = "MOBP")
-```
-
-![](Figure4_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
-
-``` r
-#dev.off()
-
-Idents(pd) = "CellType"
-#pathto.outPlots= "/data/nasser/Manuscript/plots/figure3/"
-celltype_subset <- subset(pd, idents = c("iOPC","iPPC_2", "iPPC_0", "iPPC_1", "iODC"))
-Idents(celltype_subset) <- "Mutation"
-#png(paste0(pathto.outPlots,"vlnplot_iOPC_LRRK2_PDGFRA_up_regulated.png"), width=2000, height=1100, res = 300)
-VlnPlot(celltype_subset, features = "PLXNA2")
-```
-
-![](Figure4_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
-
-``` r
-#dev.off()
-
-Idents(pd) = "CellType"
-#pathto.outPlots= "/data/nasser/Manuscript/plots/figure3/"
-celltype_subset <- subset(pd, idents = c("iOPC","iPPC_2", "iPPC_0", "iPPC_1", "iODC"))
-Idents(celltype_subset) <- "Mutation"
-#png(paste0(pathto.outPlots,"vlnplot_iOPC_LRRK2_PDGFRA_up_regulated.png"), width=2000, height=1100, res = 300)
-VlnPlot(celltype_subset, features = "TPPP")
-```
-
-![](Figure4_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->
-
-``` r
-#dev.off()
-
-Idents(pd) = "CellType"
-#pathto.outPlots= "/data/nasser/Manuscript/plots/figure3/"
-celltype_subset <- subset(pd, idents = c("iOPC","iPPC_2", "iPPC_0", "iPPC_1", "iODC"))
-Idents(celltype_subset) <- "Mutation"
-#png(paste0(pathto.outPlots,"vlnplot_iOPC_LRRK2_PDGFRA_up_regulated.png"), width=2000, height=1100, res = 300)
-VlnPlot(celltype_subset, features = "SEMA6A")
-```
-
-![](Figure4_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->
-
-``` r
-#dev.off()
-```
-
-## Figure 4-C: GO terms of downregulated DEGs
+## Figure 4-B: GO terms of downregulated DEGs
 
 ``` r
 # Define the path to the directory containing the files
@@ -224,7 +155,7 @@ rownames(heatmap_matrix) <- heatmap_data$Term
 heatmap_matrix[is.na(heatmap_matrix)] <- 0
 ```
 
-## Figure 4-C: GO Heatmap for downregulated DEGs
+## Figure 4-B: GO Heatmap for downregulated DEGs
 
 ``` r
 # Cap the maximum value to a specified threshold
@@ -247,12 +178,55 @@ Heatmap(scaled_mat,
         column_title = "CellType", 
         row_title = "Gene Ontology",
         col = viridis(5),
-        row_names_rot = 35
+        row_names_rot = 0 #35 for Figure but for better readability in rmarkdown set to 0
 )
 ```
 
-![](Figure4_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](Figure4_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 #dev.off()
 ```
+
+## Figure 4-C: Violin plot of PLXNA2 and SEMA6A in iOPC
+
+``` r
+Idents(pd) = "CellType"
+
+# Create the violin plot 
+VlnPlot(pd, features = c("PLXNA2"), idents = "iOPC", split.by = "Mutation", pt.size = 0)
+```
+
+    ## The default behaviour of split.by has changed.
+    ## Separate violin plots are now plotted side-by-side.
+    ## To restore the old behaviour of a single split violin,
+    ## set split.plot = TRUE.
+    ##       
+    ## This message will be shown once per session.
+
+![](Figure4_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+# Create the violin plot 
+VlnPlot(pd, features = c("SEMA6A"), idents = "iOPC", split.by = "Mutation", pt.size = 0)
+```
+
+![](Figure4_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+
+## Figure 4-D: Violin plot of MOBP and TPPP in iODC
+
+``` r
+Idents(pd) = "CellType"
+
+# Create the violin plot 
+VlnPlot(pd, features = c("MOBP"), idents = "iODC", split.by = "Mutation", pt.size = 0)
+```
+
+![](Figure4_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
+# Create the violin plot 
+VlnPlot(pd, features = c("TPPP"), idents = "iODC", split.by = "Mutation", pt.size = 0)
+```
+
+![](Figure4_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
