@@ -90,8 +90,8 @@ cellchat <- computeCommunProb(cellchat, type = "triMean", nboot=100)
 ```
 
     ## triMean is used for calculating the average gene expression per cell group. 
-    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 07:52:18.482544]"
-    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 07:58:30.847968]"
+    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 10:10:43.05373]"
+    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 10:16:54.622436]"
 
 ``` r
 cellchat <- filterCommunication(cellchat, min.cells = 50)
@@ -160,8 +160,8 @@ cellchat <- computeCommunProb(cellchat, type = "triMean", nboot=100)
 ```
 
     ## triMean is used for calculating the average gene expression per cell group. 
-    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 07:58:46.213824]"
-    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 08:04:17.986998]"
+    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 10:17:09.561765]"
+    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 10:22:45.226679]"
 
 ``` r
 cellchat <- filterCommunication(cellchat, min.cells = 50)
