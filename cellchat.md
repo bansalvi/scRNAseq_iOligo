@@ -3,11 +3,11 @@ Figure cellchat
 
 - [Load Data](#load-data)
 - [Subset Data HC](#subset-data-hc)
+- [Subset Data LRRK2](#subset-data-lrrk2)
 - [Create CellChat Object HC](#create-cellchat-object-hc)
 - [Subset and Preprocess Data HC](#subset-and-preprocess-data-hc)
 - [Compute Communication Probability
   HC](#compute-communication-probability-hc)
-- [Subset Data LRRK2](#subset-data-lrrk2)
 - [Create CellChat Object LRRK2](#create-cellchat-object-lrrk2)
 - [Subset and Preprocess Data LRRK2](#subset-and-preprocess-data-lrrk2)
 - [Compute Communication Probability
@@ -51,6 +51,41 @@ labels <- Idents(sSubCluster2HC_100Cells)
 meta <- data.frame(labels = labels, row.names = names(labels)) 
 ```
 
+## Subset Data LRRK2
+
+``` r
+Idents(sSubCluster2) <- "Mutation"
+sSubCluster2LRRK2 <- subset(sSubCluster2, idents = "LRRK2")
+Idents(sSubCluster2LRRK2) <- "CellType"
+sSubCluster2LRRK2_100Cells <- sSubCluster2LRRK2
+
+
+data.input <- sSubCluster2LRRK2_100Cells[["RNA"]]$data
+labels_1 <- Idents(sSubCluster2LRRK2_100Cells)
+meta <- data.frame(labels = labels_1, row.names = names(labels_1)) # create a dataframe of the cell labels
+```
+
+``` r
+# Ensure consistent ordering of cell types
+cell_types <- levels(Idents(sSubCluster2LRRK2_100Cells))
+
+# Align HC cell type levels to LRRK2
+Idents(sSubCluster2HC_100Cells) <- factor(Idents(sSubCluster2HC_100Cells), levels = cell_types)
+
+# Verify the ordering
+print(levels(Idents(sSubCluster2HC_100Cells)))
+```
+
+    ##  [1] "iPPC_1" "iNL2"   "iOPC"   "iCEP"   "iNL1"   "iRGC"   "iPPC_0" "iODC"  
+    ##  [9] "iINPC"  "iPPC_2"
+
+``` r
+print(levels(Idents(sSubCluster2LRRK2_100Cells)))
+```
+
+    ##  [1] "iPPC_1" "iNL2"   "iOPC"   "iCEP"   "iNL1"   "iRGC"   "iPPC_0" "iODC"  
+    ##  [9] "iINPC"  "iPPC_2"
+
 ## Create CellChat Object HC
 
 ``` r
@@ -61,14 +96,14 @@ cellchat <- createCellChat(object = sSubCluster2HC_100Cells, group.by = "ident",
     ## [1] "Create a CellChat object from a Seurat object"
     ## The `meta.data` slot in the Seurat object is used as cell meta information 
     ## Set cell identities for the new CellChat object 
-    ## The cell groups used for CellChat analysis are  iNL1, iPPC_2, iNL2, iINPC, iRGC, iODC, iCEP, iPPC_0, iPPC_1, iOPC
+    ## The cell groups used for CellChat analysis are  iPPC_1, iNL2, iOPC, iCEP, iNL1, iRGC, iPPC_0, iODC, iINPC, iPPC_2
 
 ``` r
 CellChatDB <- CellChatDB.human # use CellChatDB.mouse if running on mouse data
 showDatabaseCategory(CellChatDB)
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ## Subset and Preprocess Data HC
 
@@ -90,8 +125,8 @@ cellchat <- computeCommunProb(cellchat, type = "triMean", nboot=100)
 ```
 
     ## triMean is used for calculating the average gene expression per cell group. 
-    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 10:10:43.05373]"
-    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 10:16:54.622436]"
+    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 17:58:07.43524]"
+    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 18:04:50.33199]"
 
 ``` r
 cellchat <- filterCommunication(cellchat, min.cells = 50)
@@ -108,18 +143,16 @@ cellchatHC
     ##  17059 cells. 
     ## CellChat analysis of single cell RNA-seq data!
 
-## Subset Data LRRK2
-
-``` r
-Idents(sSubCluster2) <- "Mutation"
-sSubCluster2LRRK2 <- subset(sSubCluster2, idents = "LRRK2")
-Idents(sSubCluster2LRRK2) <- "CellType"
-sSubCluster2LRRK2_100Cells <- sSubCluster2LRRK2
-
-data.input <- sSubCluster2LRRK2_100Cells[["RNA"]]$data
-labels <- Idents(sSubCluster2LRRK2_100Cells)
-meta <- data.frame(labels = labels, row.names = names(labels)) # create a dataframe of the cell labels
-```
+<!-- ## Subset Data LRRK2 -->
+<!-- ```{r, message=FALSE} -->
+<!-- Idents(sSubCluster2) <- "Mutation" -->
+<!-- sSubCluster2LRRK2 <- subset(sSubCluster2, idents = "LRRK2") -->
+<!-- Idents(sSubCluster2LRRK2) <- "CellType" -->
+<!-- sSubCluster2LRRK2_100Cells <- sSubCluster2LRRK2 -->
+<!-- data.input <- sSubCluster2LRRK2_100Cells[["RNA"]]$data -->
+<!-- labels_1 <- Idents(sSubCluster2LRRK2_100Cells) -->
+<!-- meta <- data.frame(labels = labels_1, row.names = names(labels_1)) # create a dataframe of the cell labels -->
+<!-- ``` -->
 
 ## Create CellChat Object LRRK2
 
@@ -138,7 +171,7 @@ CellChatDB <- CellChatDB.human # use CellChatDB.mouse if running on mouse data
 showDatabaseCategory(CellChatDB)
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ## Subset and Preprocess Data LRRK2
 
@@ -160,8 +193,8 @@ cellchat <- computeCommunProb(cellchat, type = "triMean", nboot=100)
 ```
 
     ## triMean is used for calculating the average gene expression per cell group. 
-    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 10:17:09.561765]"
-    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 10:22:45.226679]"
+    ## [1] ">>> Run CellChat on sc/snRNA-seq data <<< [2024-08-08 18:04:58.394811]"
+    ## [1] ">>> CellChat inference is done. Parameter values are stored in `object@options$parameter` <<< [2024-08-08 18:10:36.001226]"
 
 ``` r
 cellchat <- filterCommunication(cellchat, min.cells = 50)
@@ -193,7 +226,7 @@ gg2 <- compareInteractions(cellchat, show.legend = F, group = c(1,2), measure = 
 gg1 + gg2
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
 gg1 <- rankNet(cellchat, color.use = c("#00BFC4", "#F8766D"), mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = T, do.stat = TRUE)
@@ -203,7 +236,7 @@ gg2 <- rankNet(cellchat, color.use = c("#00BFC4", "#F8766D"), mode = "comparison
 gg1 + gg2
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-11-2.png)<!-- -->
 
 ``` r
 #dev.off()
@@ -220,7 +253,7 @@ gg1 + gg2
 gg1 
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ## Pathways Analysis
 
@@ -242,7 +275,7 @@ plotGeneExpression(cellchat, signaling = "SEMA6", split.by = "datasets", colors.
 #dev.off()
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ## Figure 5-B: PSAP Information Flow Visualization
 
@@ -257,7 +290,7 @@ for (i in 1:1) {
 #dev.off()
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ## MIF Gene Expression
 
@@ -282,7 +315,7 @@ plotGeneExpression(cellchat, signaling = "MIF", split.by = "datasets", colors.gg
     ## Scale for y is already present.
     ## Adding another scale for y, which will replace the existing scale.
 
-![](cellchat_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 #dev.off()
@@ -298,7 +331,7 @@ for (i in 2:length(object.list)) {
 }
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
 #dev.off()
@@ -315,7 +348,7 @@ for (i in 1:length(object.list)) {
 }
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ## Selected Overall Gene Expression
 
@@ -325,7 +358,7 @@ cellchat@meta$datasets = factor(cellchat@meta$datasets, levels = c("HC", "LRRK2"
 plotGeneExpression(cellchat, signaling = c("SEMA3", "SEMA4", "SEMA5", "SEMA6"), split.by = "datasets", colors.ggplot = T, type = "violin")
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 #dev.off()
@@ -335,7 +368,7 @@ cellchat@meta$datasets = factor(cellchat@meta$datasets, levels = c("HC", "LRRK2"
 plotGeneExpression(cellchat, signaling = c("HH"), split.by = "datasets", colors.ggplot = T, type = "violin")
 ```
 
-![](cellchat_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
+![](cellchat_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
 
 ``` r
 #dev.off()
