@@ -2,13 +2,15 @@ snRNA_seq_Manuscript_Fig7
 ================
 2024-09-06
 
+- [Command for cellranger pipeline](#command-for-cellranger-pipeline)
 - [Load libraries](#load-libraries)
 - [Load the RNA-Seq data](#load-the-rna-seq-data)
 - [Figure 6-E : SEMA6A and PLXNA2 Violin
   Plots](#figure-6-e--sema6a-and-plxna2-violin-plots)
 
-\#Command for cellranger pipeline cd
-/mnt/md0/Nasser/20084I_0552_Mo_snRNA &&
+## Command for cellranger pipeline
+
+cd /mnt/md0/Nasser/20084I_0552_Mo_snRNA &&
 /mnt/md0/MultiOmics/Tools/Nasser/cellranger-8.0.0/cellranger count
 –id=20084a001_02
 –transcriptome=/mnt/md0/MultiOmics/Database/Nasser/refdata-gex-GRCh38-2024-A
